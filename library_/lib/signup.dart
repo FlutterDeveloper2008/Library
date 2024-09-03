@@ -47,9 +47,17 @@ class _SignUpPageState extends State<SignUpPage> {
         return;
       }
 
+      if (_selectedDate == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please select your birthdate')),
+        );
+        return;
+      }
+
       String hashedPassword = BCrypt.hashpw(_password!, BCrypt.gensalt());
       final String apiUrl = "https://dash.vips.uz/api-in/31/2432/35128";
       String regDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      String birthdate = DateFormat('yyyy-MM-dd').format(_selectedDate!);
 
       try {
         final response = await http.post(
@@ -63,17 +71,66 @@ class _SignUpPageState extends State<SignUpPage> {
             'lastname': _lastName!,
             'username': _username!,
             'email': _email!,
+            'birthdate': birthdate,
             'password': hashedPassword,
             'regdate': regDate,
-            'image': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg',
+            'image':
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Unknown_person.jpg/694px-Unknown_person.jpg',
           },
         );
 
         if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Registration successful')),
+          showDialog(
+            context: context,
+            barrierDismissible:
+                false, // Prevent dialog from closing when tapping outside
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: SizedBox(
+                  height: 400,
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          height: 200,
+                          child: Image.network(
+                              'https://media.tenor.com/BSY1qTH8g-oAAAAM/check.gif'),
+                        ),
+                        FittedBox(
+                            child: Text(
+                          'Registered successfully!',
+                          style: TextStyle(fontSize: 25),
+                        )),
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Go to Login',
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           );
-          Navigator.pop(context); // Navigate back to login page
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to register')),
@@ -92,25 +149,35 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: TextButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => LoginPage()));
-            },
-            child: Text(
-              'Already have an account?',
-              style: TextStyle(color: Colors.amber.shade900),
-            )),
-      ),
       extendBodyBehindAppBar: true,
-      body: PageView(
-        controller: _pageController,
-        children: [
-          _buildPersonalInfoPage(),
-          _buildAccountInfoPage(),
-        ],
+      body: SingleChildScrollView(
+        child: Container(
+          height: 750,
+          child: Stack(
+            children: [
+              PageView(
+                physics: NeverScrollableScrollPhysics(),
+                controller: _pageController,
+                children: [
+                  _buildPersonalInfoPage(),
+                  _buildAccountInfoPage(),
+                ],
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: TextButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => LoginPage()));
+                    },
+                    child: Text(
+                      'Already have an account?',
+                      style: TextStyle(color: Colors.amber.shade900),
+                    )),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -438,6 +505,47 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class success extends StatefulWidget {
+  const success({super.key});
+
+  @override
+  State<success> createState() => _successState();
+}
+
+class _successState extends State<success> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 200,
+            child: Image(
+                image: NetworkImage(
+                    'https://media.tenor.com/BSY1qTH8g-oAAAAM/check.gif')),
+          ),
+          Text('Registered succecfully !'),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10))),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginPage()));
+              },
+              child: Text(
+                'Login',
+                style: TextStyle(color: Colors.white, fontSize: 35),
+              ))
+        ],
+      )),
     );
   }
 }

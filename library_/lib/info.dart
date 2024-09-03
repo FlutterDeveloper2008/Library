@@ -109,7 +109,7 @@ class _InfoPageState extends State<InfoPage>
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("Ma'lumot bazaga saqlandi"),
+          content: Text("Comment added"),
           backgroundColor: Colors.yellow,
         ));
         fetchReviews(); // Refresh reviews after posting
@@ -488,9 +488,12 @@ setState(() {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    widget.booky?.shortinfo ?? 'No short information',
-                    style: TextStyle(fontSize: 19),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 50),
+                    child: Text(
+                      widget.booky?.shortinfo ?? 'No short information',
+                      style: TextStyle(fontSize: 19),
+                    ),
                   ),
                 ),
                 Padding(

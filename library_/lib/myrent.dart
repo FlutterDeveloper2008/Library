@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'models/data.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
+import 'loan_detail_page.dart';
 
 class MyRentalsPage extends StatefulWidget {
   final User? currentUser;
@@ -13,7 +14,8 @@ class MyRentalsPage extends StatefulWidget {
   _MyRentalsPageState createState() => _MyRentalsPageState();
 }
 
-class _MyRentalsPageState extends State<MyRentalsPage> with TickerProviderStateMixin {
+class _MyRentalsPageState extends State<MyRentalsPage>
+    with TickerProviderStateMixin {
   List<Loan> loans = [];
   bool isLoading = true;
   late TabController _tabController;
@@ -44,7 +46,6 @@ class _MyRentalsPageState extends State<MyRentalsPage> with TickerProviderStateM
         List<Loan> fetchedLoans =
             loansData.map((data) => Loan.fromJson(data)).toList();
 
-        // Filter loans based on user ID
         List<Loan> filteredLoans = fetchedLoans
             .where((loan) => loan.userid == widget.currentUser!.id)
             .toList();
@@ -95,6 +96,9 @@ class _MyRentalsPageState extends State<MyRentalsPage> with TickerProviderStateM
       appBar: AppBar(
         title: Text('My Rentals'),
         bottom: TabBar(
+          labelColor: Colors.amber,
+          unselectedLabelColor: Colors.grey,
+          indicatorColor: Colors.amber,
           controller: _tabController,
           tabs: [
             Tab(text: 'Active'),
@@ -115,33 +119,58 @@ class _MyRentalsPageState extends State<MyRentalsPage> with TickerProviderStateM
             ),
     );
   }
-
-  Widget buildLoansList(List<Loan> loansList) {
-    if (loansList.isEmpty) {
-      return Center(child: Text('No rentals found.'));
-    }
-    return ListView.builder(
-      itemCount: loansList.length,
-      itemBuilder: (context, index) {
-        final loan = loansList[index];
-        return Card(
-          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          child: ListTile(
-            leading: loan.image.isNotEmpty
-                ? Image.network(
-                    loan.image,
-                    width: 50,
-                    height: 75,
-                    fit: BoxFit.cover,
-                  )
-                : Icon(Icons.book),
-            title: Text(loan.name),
-            subtitle: Text(
-                'Borrowed: ${loan.borroweddate}\nReturn: ${loan.returndate}'),
-            trailing: Icon(Icons.arrow_forward_ios),
-          ),
-        );
-      },
-    );
+Widget buildLoansList(List<Loan> loansList) {
+  if (loansList.isEmpty) {
+    return Center(child: Text('No rentals found.'));
   }
-}
+  
+  return ListView.builder(
+    itemCount: loansList.length,
+    itemBuilder: (context, index) {
+      final loan = loansList[index];
+      
+      // Determine the status of the loan
+      DateTime now = DateTime.now();
+      DateTime borrowedDate = DateFormat('yyyy-MM-dd').parse(loan.borroweddate);
+      DateTime returnDate = DateFormat('yyyy-MM-dd').parse(loan.returndate);
+      String subtitle = '';
+      
+      if (borrowedDate.isBefore(now) && returnDate.isAfter(now)) {
+        // Active loan
+        subtitle = 'Reserved date: ${loan.borroweddate}';
+      } else if (borrowedDate.isAfter(now)) {
+        // Coming loan
+        subtitle = 'Reserved date: ${loan.borroweddate}';
+      } else if (returnDate.isBefore(now)) {
+        // Expired loan
+        subtitle = 'Reserved date: ${loan.borroweddate}\nReturn date: ${loan.returndate}';
+      }
+      
+      return Card(
+        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        child: ListTile(
+          leading: loan.image.isNotEmpty
+              ? Image.network(
+                  loan.image,
+                  width: 50,
+                  height: 75,
+                  fit: BoxFit.cover,
+                )
+              : Icon(Icons.book),
+          title: Text(loan.name),
+          subtitle: Text(subtitle),
+          trailing: Icon(Icons.arrow_forward_ios),
+          onTap: () {
+            // Navigate to detail page on tap
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LoanDetailPage(loan: loan),
+              ),
+            );
+          },
+        ),
+      );
+    },
+  );
+}}

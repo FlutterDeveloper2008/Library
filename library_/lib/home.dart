@@ -47,19 +47,14 @@ class BookList extends StatelessWidget {
             snap: false,
             centerTitle: false,
             title: Text('Kitoblar Olami'),
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.bookmark_outline),
-              ),
-            ],
+            
             leading: DrawerButton(),
             backgroundColor: Colors.transparent,
             flexibleSpace: SizedBox(
               height: double.infinity,
               width: double.infinity,
             ),
-            bottom: AppBar(
+            bottom: AppBar(leadingWidth: 0,
               shadowColor: Colors.white,
               foregroundColor: Colors.white,
               surfaceTintColor: Colors.white,

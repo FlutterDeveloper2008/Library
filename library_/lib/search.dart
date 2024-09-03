@@ -24,16 +24,16 @@ class _SearchPageState extends State<SearchPage> {
   bool _isListening = false;
 
   @override
-void initState() {
-  super.initState();
-  _speech = stt.SpeechToText();
-  searchResults = widget.books;  // Initialize searchResults with all books
-}
+  void initState() {
+    super.initState();
+    _speech = stt.SpeechToText();
+    searchResults = widget.books; // Initialize searchResults with all books
+  }
 
   void _onSearchChanged(String query) {
     if (query.isEmpty) {
-  searchResults = widget.books;
-}
+      searchResults = widget.books;
+    }
 
     setState(() {
       searchQuery = query;
@@ -76,7 +76,6 @@ void initState() {
       _speech.stop();
     }
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +102,12 @@ void initState() {
                       prefixIcon: Icon(Icons.search),
                       suffixIcon: IconButton(
                         icon: Icon(_isListening ? Icons.mic : Icons.mic_none),
-                        onPressed: _listen,
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              duration: Duration(seconds: 1),
+                              content: Text(
+                                  'Your device doesn\'t support this function')));
+                        },
                       ),
                     ),
                   ),
@@ -203,7 +207,8 @@ void initState() {
                       if (book.avgRating != null) ...[
                         Text(
                           book.avgRating!.toStringAsFixed(1),
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 12),
                         ),
                         SizedBox(width: 4),
                         _buildStarRating(book.avgRating!),
