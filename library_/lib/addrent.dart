@@ -174,8 +174,9 @@ class _MyRentalsaddState extends State<MyRentalsadd> {
                               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                             ),
                             SizedBox(height: 16),
-                            Text(
-                              'Available Copies: ${bookDetails!['qoldiq']}',
+                            Text(int.parse(bookDetails!['qoldiq'])>=0?
+                              'Available Copies: ${bookDetails!['qoldiq']}':
+                              'No available copies',
                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             if (!hasAvailableCopies)
@@ -190,7 +191,7 @@ class _MyRentalsaddState extends State<MyRentalsadd> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 24),
+                    SizedBox(height: 24),int.parse(bookDetails!['qoldiq'])>=0?
                     Card(
                       elevation: 4,
                       child: Padding(
@@ -218,8 +219,8 @@ class _MyRentalsaddState extends State<MyRentalsadd> {
                           ],
                         ),
                       ),
-                    ),
-                    SizedBox(height: 24),
+                    ):SizedBox(),
+                    SizedBox(height: 24),int.parse(bookDetails!['qoldiq'])>=0?
                     Center(
                       child: ElevatedButton(
                         onPressed: rentBook,
@@ -231,7 +232,7 @@ backgroundColor: Colors.amber,                          padding: EdgeInsets.symm
                           ),
                         ),
                       ),
-                    ),
+                    ):Container(),
                   ],
                 ),
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:library_/bookmark.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'models/data.dart';
 import 'info.dart';
 
@@ -24,6 +25,56 @@ class BookList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Stack(
+                children: [
+                  SizedBox(
+                      height: 110,
+                         ),
+                  Text(
+                    '  Kitoblar Olami',
+                    style: TextStyle(fontSize: 30),
+                  )
+                ],
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.telegram_sharp),
+              title: Text('Send messege to developer'),
+              onTap: () {
+                launch('https://t.me//hater08');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.android),
+              title: Text('More apps ..'),
+              onTap: () {
+                launch(
+                    'https://play.google.com/store/apps/dev?id=6061707318248318744&hl=en_SG');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.qr_code),
+              title: Text('Qr code scanner'),
+              onTap: () {
+                launch(
+                    'https://play.google.com/store/apps/details?id=com.scancraftid.yourapp&hl=en_SG');
+              },
+            ),
+            SizedBox(
+              height: 410,
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Text('v1.0.0'),
+            )
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.amber,
         onPressed: () {
@@ -47,14 +98,14 @@ class BookList extends StatelessWidget {
             snap: false,
             centerTitle: false,
             title: Text('Kitoblar Olami'),
-            
             leading: DrawerButton(),
             backgroundColor: Colors.transparent,
             flexibleSpace: SizedBox(
               height: double.infinity,
               width: double.infinity,
             ),
-            bottom: AppBar(leadingWidth: 0,
+            bottom: AppBar(
+              leadingWidth: 0,
               shadowColor: Colors.white,
               foregroundColor: Colors.white,
               surfaceTintColor: Colors.white,

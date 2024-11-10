@@ -18,12 +18,14 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   List<Loan> userLoans = [];
   bool isLoading = true;
+  String count = '0';
 
   @override
   void initState() {
     super.initState();
     if (widget.user != null) {
       fetchUserLoans();
+      getCountData();
     } else {
       setState(() {
         isLoading = false;
@@ -56,6 +58,25 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> getCountData() async {
+    try {
+      String apilink =
+          "https://dash.vips.uz/r-api/31/2432/127?:userid=${widget.user!.id}";
+      final response = await http.get(Uri.parse(apilink));
+
+      if (response.statusCode == 200) {
+        List<dynamic> number = jsonDecode(response.body);
+        setState(() {
+          count = number[0]['COUNT(id)'].toString();
+        });
+      } else {
+        throw Exception('Failed to fetch count data');
+      }
+    } catch (e) {
+      print('Error fetching count data: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,14 +85,14 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         actions: [
           PopupMenuButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.settings_outlined,
               color: Colors.white,
             ),
             itemBuilder: (BuildContext context) => [
               PopupMenuItem(
                 child: ListTile(
-                  title: Text(
+                  title: const Text(
                     'Log Out',
                     style: TextStyle(color: Colors.red),
                   ),
@@ -79,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     widget.onLogout();
                     userLoans.clear(); // Call the onLogout callback
                   },
-                  leading: Icon(
+                  leading: const Icon(
                     Icons.logout,
                     color: Colors.red,
                   ),
@@ -89,11 +110,11 @@ class _ProfilePageState extends State<ProfilePage> {
           )
         ],
         backgroundColor: const Color.fromRGBO(0, 0, 0, 0),
-        title: Text('Profilim', style: TextStyle(color: Colors.white)),
+        title: const Text('Profilim', style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
       body: widget.user == null
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Stack(
               children: [
                 Align(
@@ -101,22 +122,24 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Container(
                     height: 370,
                     width: double.infinity,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       borderRadius:
                           BorderRadius.vertical(bottom: Radius.circular(50)),
                       color: Colors.amber,
                     ),
                     child: Column(
                       children: [
-                        SizedBox(height: 80),
+                        const SizedBox(height: 80),
                         CircleAvatar(
-                          backgroundImage: NetworkImage(widget.user!.image),
+                          backgroundImage:
+                              CachedNetworkImageProvider(widget.user!.image),
                           radius: 50,
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Text(
                           '${widget.user!.firstname} ${widget.user!.lastname}',
-                          style: TextStyle(color: Colors.white, fontSize: 26),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 26),
                         ),
                         Text(
                           widget.user!.email,
@@ -130,9 +153,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   alignment: Alignment.bottomCenter,
                   child: Container(
                     width: double.infinity,
-                    padding: EdgeInsets.fromLTRB(15, 25, 15, 10),
-                    margin: EdgeInsets.fromLTRB(20, 330, 20, 0),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.fromLTRB(15, 25, 15, 10),
+                    margin: const EdgeInsets.fromLTRB(20, 330, 20, 0),
+                    decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(50)),
@@ -140,13 +163,21 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        
+                        Container(
+                          padding: EdgeInsets.all(20),
+                          child: Text(
+                            '$count books rented',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 20),
+                          ),
+                        )
                       ],
                     ),
                   ),
                 ),
               ],
             ),
+     
     );
   }
 }
