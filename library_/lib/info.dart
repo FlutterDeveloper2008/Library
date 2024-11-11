@@ -189,7 +189,7 @@ class _InfoPageState extends State<InfoPage>
   Widget _buildFloatingActionButton() {
     return _tabController.index == 0
         ? _buildRentButton()
-        : _buildCommentField();
+        : widget.currentUser!.username!='guest'? _buildCommentField():Container(height: 50,width: double.infinity,color: Colors.grey.shade300,child: Center(child: Text('Loign to rate'),),);
   }
 
   Widget _buildCommentField() {
@@ -262,7 +262,7 @@ setState(() {
   Widget _buildRentButton() {
     return GestureDetector(
       onTap: () {
-        if (widget.currentUser != null && widget.booky != null) {
+        if (widget.currentUser != null && widget.booky != null&&widget.currentUser!.username!= 'guest' ) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -272,7 +272,7 @@ setState(() {
               ),
             ),
           );
-        } else {
+        }  else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Please log in to rent a book')),
           );
@@ -292,7 +292,7 @@ setState(() {
           ),
         ),
         child: Text(
-          'Ijaraga olish',
+          'Rent',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -574,7 +574,9 @@ setState(() {
       actions: [
         IconButton(
             onPressed: () {
-              widget.booky?.isBookmarked ?? false ? unbook() : addbook();
+              if(widget.currentUser!.username!='guest'){
+              widget.booky?.isBookmarked ?? false ? unbook() : addbook();}
+              else{ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Login to bookmark books')));}
             },
             icon: widget.booky?.isBookmarked ?? false
                 ? Icon(Icons.bookmark)

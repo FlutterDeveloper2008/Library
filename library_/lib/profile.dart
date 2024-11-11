@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:library_/login.dart';
 import 'models/data.dart';
 import 'dart:convert';
 
@@ -165,11 +166,22 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         Container(
                           padding: EdgeInsets.all(20),
-                          child: Text(
-                            '$count books rented',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500, fontSize: 20),
-                          ),
+                          child: widget.user!.username.toString() != 'guest'
+                              ? Text(
+                                  '$count books rented',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 20),
+                                )
+                              : Column(
+                                  children: [
+                                    FittedBox(
+                                        child: Text(
+                                      'Login into account to rent books!',
+                                      style: TextStyle(fontSize: 29),
+                                    )),SizedBox(height: 10,),ElevatedButton(style: ElevatedButton.styleFrom(surfaceTintColor: Colors.amber,overlayColor: Colors.amber),onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginPage()));}, child: Text('Login',style: TextStyle(color: Colors.black,fontSize: 20),),),
+                                  ],
+                                ),
                         )
                       ],
                     ),
@@ -177,7 +189,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-     
     );
   }
 }

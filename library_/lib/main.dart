@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> {
       ),
       home: _isLoggedIn
           ? Home(onLogout: _handleLogout, currentUser: _currentUser)
-          : Guestorlogin(),
+          : GuestOrLogin(),
     );
   }
 }

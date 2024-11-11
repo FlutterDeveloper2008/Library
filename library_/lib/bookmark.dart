@@ -17,24 +17,28 @@ class BookmarkedBooksPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool sh=false;
     // Filter the books to only show bookmarked ones
     final bookmarkedBooks = books
         .where(
           (book) => book.isBookmarked == true,
         )
         .toList();
+        bookmarkedBooks!=null?sh=false:sh=true;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.amber,
-        onPressed: () {Navigator.pop(context);},
+        onPressed: () {
+          Navigator.pop(context);
+        },
         child: Icon(
           Icons.home_outlined,
           color: Colors.white,
         ),
       ),
       extendBodyBehindAppBar: true,
-      body: CustomScrollView(
+      body:CustomScrollView(
         slivers: [
           SliverAppBar(
             floating: true,
